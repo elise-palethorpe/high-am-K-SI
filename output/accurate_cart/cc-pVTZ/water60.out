@@ -1,0 +1,117 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used 29f7f3f96ffaba07f8606b6663fb6adc7dc78cfc
+Start of Calculation Local time: 2026-06-19 13:38:41
+Start of Calculation UTC time:   2026-06-19 03:38:41
+├── Calculation params
+│   ├── Title: water60
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: cc-pVTZ
+│   │   ├── Basis set type: Carteisian
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 20
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-20
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: False
+│   │   │   ├── Fock build type: JK
+│   │   │   ├── Box shell pair batch container: True
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 0.543490s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -4560.2241899780 |   4.5602e+03   |    3.2908     |    0.1553
+    2     | -4562.6305940165 |   2.4064e+00   |   41.9875     |    0.1324
+    3     | -4563.6842875060 |   1.0537e+00   |   42.6935     |    0.1378
+    4     | -4563.9322420582 |   2.4795e-01   |   42.4409     |    0.1419
+    5     | -4563.9425431128 |   1.0301e-02   |   42.4004     |    0.1452
+    6     | -4563.9431816648 |   6.3855e-04   |   42.4052     |    0.1494
+    7     | -4563.9432493719 |   6.7707e-05   |   42.4431     |    0.1546
+    8     | -4563.9432594003 |   1.0028e-05   |   42.4050     |    0.1588
+    9     | -4563.9432598513 |   4.5099e-07   |   42.3973     |    0.1590
+   10     | -4563.9432598780 |   2.6739e-08   |   42.3369     |    0.1597
+   11     | -4563.9432598810 |   2.9540e-09   |   42.3946     |    0.1608
+   12     | -4563.9432598812 |   2.3283e-10   |   42.4675     |    0.1570
+   13     | -4563.9432598812 |   2.5466e-11   |   42.4884     |    0.1569
+=======================================================
+                   HF Energy Results                   
+=======================================================
+E HF                  -4563.94325988
+Converged:            1
+# of SCF iterations:  13
+SCF Time:             516.55s
+
+=======================================================
+            Individual Calculation Summary             
+=======================================================
+HF Energy: -4563.9432598812345532
+=======================================================
+
+
+
+Now, a word from our developers... 
+ The Chicxulub crater buried underneath the Yucatan peninsula in Mexico is widely 
+ acccepted as the event that triggered the extintions of dinosaurs. 
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 524.480990 seconds[0m

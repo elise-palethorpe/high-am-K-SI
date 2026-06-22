@@ -1,0 +1,106 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used 29f7f3f96ffaba07f8606b6663fb6adc7dc78cfc
+Start of Calculation Local time: 2026-06-19 04:05:13
+Start of Calculation UTC time:   2026-06-18 18:05:13
+├── Calculation params
+│   ├── Title: water100
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: cc-pVQZ
+│   │   ├── Basis set type: Spherical
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 15
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-11
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: True
+│   │   │   ├── Fock build type: JK
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 2.731215s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -7601.2951247394 |   7.6013e+03   |   35.9684     |    1.7748
+    2     | -7604.7298318720 |   3.4347e+00   |   301.2768     |    1.8018
+    3     | -7606.5388729024 |   1.8090e+00   |   283.0861     |    1.8192
+    4     | -7606.9961909802 |   4.5732e-01   |   245.5343     |    1.8450
+    5     | -7607.0142857433 |   1.8095e-02   |   184.2889     |    1.8523
+    6     | -7607.0154650668 |   1.1793e-03   |   147.9375     |    1.8817
+    7     | -7607.0155867445 |   1.2168e-04   |   117.5184     |    1.8987
+    8     | -7607.0156030636 |   1.6319e-05   |   96.5087     |    1.9108
+    9     | -7607.0155962365 |   6.8270e-06   |   75.0410     |    1.9253
+   10     | -7607.0155927565 |   3.4800e-06   |   50.5456     |    1.9236
+   11     | -7607.0155877368 |   5.0197e-06   |   53.8243     |    1.9235
+   12     | -7607.0155862207 |   1.5161e-06   |   54.8447     |    1.9210
+   13     | -7607.0155833521 |   2.8686e-06   |   63.2971     |    1.9225
+   14     | -7607.0155842414 |   8.8928e-07   |   63.4152     |    1.9138
+   15     | -7607.0155846044 |   3.6300e-07   |   61.1312     |    1.9190
+Warning: HF did not converge in 15 iterations
+RHF failed to converge
+WARNING: Destructing a running timer.
+WARNING: Destructing a running timer.
+
+Now, a word from our developers... 
+ The only thing you need is a cudaDeviceReset() and you're good to go, great programming practices! (unknown)
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 2123.731370 seconds[0m

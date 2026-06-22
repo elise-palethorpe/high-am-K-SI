@@ -1,0 +1,306 @@
+/scratch/kx58/ep9149/software/venvs/gpu4pyscf-py310/lib/python3.10/site-packages/gpu4pyscf/lib/cutensor.py:154: UserWarning: using cupy as the tensor contraction engine.
+  warnings.warn(f'using {contract_engine} as the tensor contraction engine.')
+#INFO: **** input file is /g/data/kx58/ep9149/scripts-and-io/job_scripts/gadi/pyscf/run_gpu4pyscf.py ****.
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import time
+from pathlib import Path
+
+
+def read_xyz(path: Path) -> str:
+    lines = path.read_text().splitlines()
+    nat = int(lines[0].strip())
+    body = lines[2 : 2 + nat]
+    atoms = []
+    for ln in body:
+        parts = ln.split()
+        atoms.append(f"{parts[0]} {parts[1]} {parts[2]} {parts[3]}")
+    return "\n".join(atoms)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--xyz", required=True, type=Path)
+    ap.add_argument("--basis", default="cc-pVTZ")
+    ap.add_argument("--max-cycle", type=int, default=15)
+    ap.add_argument("--conv-tol", type=float, default=1e-8)
+    ap.add_argument("--conv-tol-grad", type=float, default=1e6)
+    ap.add_argument("--direct-scf-tol", type=float, default=3.16e-11)
+    ap.add_argument("--verbose", type=int, default=4)
+    args = ap.parse_args()
+
+    from pyscf import gto
+    from gpu4pyscf import scf as gscf
+    import cupy as cp
+
+    atom_str = read_xyz(args.xyz)
+
+    mol = gto.M(
+        atom=atom_str,
+        basis=args.basis,
+        unit="Angstrom",
+        verbose=args.verbose,
+        cart=False,
+    )
+    nbf = mol.nao_nr()
+
+    mf = gscf.RHF(mol)
+    mf.direct_scf = True
+    mf.direct_scf_tol = args.direct_scf_tol
+    mf.max_cycle = args.max_cycle
+    mf.conv_tol = args.conv_tol
+    mf.conv_tol_grad = args.conv_tol_grad
+    mf.diis_space = 8
+    mf.diis_start_cycle = 1
+
+    _orig_get_veff = mf.get_veff
+
+    def timed_get_veff(*a, **kw):
+        cp.cuda.Device().synchronize()
+        t0 = time.perf_counter()
+        result = _orig_get_veff(*a, **kw)
+        cp.cuda.Device().synchronize()
+        wall = time.perf_counter() - t0
+        print(f"    CPU time for vj and vk on gpu {wall:20.2f} sec, wall time {wall:10.2f} sec")
+        return result
+
+    mf.get_veff = timed_get_veff
+
+    dm0 = mf.get_init_guess(mol, key="atom")
+
+    print(f"basis = {args.basis}")
+    print(f"number of NR cGTOs = {nbf}")
+    print(f"direct_scf_tol = {args.direct_scf_tol}")
+    print(f"max_cycle = {args.max_cycle}")
+    print(f"conv_tol = {args.conv_tol}")
+    print(f"conv_tol_grad = {args.conv_tol_grad}")
+
+    e_tot = mf.kernel(dm0=dm0)
+
+    print(f"\nE HF = {e_tot:.15f}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='gadi-gpu-h200-0008.gadi.nci.org.au', release='4.18.0-553.92.1.el8.nci.x86_64', version='#1 SMP Thu Jan 22 00:54:48 UTC 2026', machine='x86_64')  Threads 1
+Python 3.10.4 (main, Apr 14 2022, 08:51:36) [GCC 8.5.0 20210514 (Red Hat 8.5.0-4)]
+numpy 2.2.6  scipy 1.15.3  h5py 3.16.0
+Date: Fri Apr 10 12:35:48 2026
+PySCF version 2.12.1
+PySCF path  /scratch/kx58/ep9149/software/venvs/gpu4pyscf-py310/lib/python3.10/site-packages/pyscf/__init__.py
+CUDA Environment
+    CuPy 14.0.1
+    CUDA Path /apps/cuda/12.8.0
+    CUDA Build Version 12090
+    CUDA Driver Version 13000
+    CUDA Runtime Version 12090
+CUDA toolkit
+    cuSolver (11, 7, 2)
+    cuBLAS 120803
+    cuTENSOR None
+Device info
+    Device name b'NVIDIA H200'
+    Device global memory 140.06 GB
+    CuPy memory fraction 0.9
+    Num. Devices 1
+GPU4PySCF 1.6.1
+GPU4PySCF path  /scratch/kx58/ep9149/software/venvs/gpu4pyscf-py310/lib/python3.10/site-packages/gpu4pyscf
+
+[CONFIG] conf_file None
+[INPUT] verbose = 4
+[INPUT] num. atoms = 60
+[INPUT] num. electrons = 200
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = Angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 H      1.969860000000  -3.634020000000   1.337020000000 AA    3.722495903736  -6.867302531192   2.526601623066 Bohr   0.0
+[INPUT]  2 O      2.903960000000  -3.407850000000   1.080680000000 AA    5.487689076692  -6.439903173599   2.042189228295 Bohr   0.0
+[INPUT]  3 H      3.317010000000  -4.281440000000   1.196710000000 AA    6.268240452444  -8.090749018758   2.261454150528 Bohr   0.0
+[INPUT]  4 H     -2.959370000000   3.963660000000  -0.727880000000 AA   -5.592398801254   7.490231850894  -1.375493851548 Bohr   0.0
+[INPUT]  5 O     -2.137830000000   3.462760000000  -0.867350000000 AA   -4.039913200879   6.543668035099  -1.639053954142 Bohr   0.0
+[INPUT]  6 H     -2.392570000000   2.590870000000  -0.475440000000 AA   -4.521302033851   4.896034724352  -0.898451388663 Bohr   0.0
+[INPUT]  7 H      1.037030000000   1.067480000000   2.944510000000 AA    1.959702682958   2.017244843451   5.564317471043 Bohr   0.0
+[INPUT]  8 O      0.759680000000   0.119140000000   2.917960000000 AA    1.435587142310   0.225141970481   5.514145242436 Bohr   0.0
+[INPUT]  9 H      1.430560000000  -0.214420000000   2.276020000000 AA    2.703366604758  -0.405195075629   4.301054454033 Bohr   0.0
+[INPUT] 10 H      0.140760000000  -3.399340000000   2.695150000000 AA    0.265997849294  -6.423821604279   5.093095364622 Bohr   0.0
+[INPUT] 11 O      0.380040000000  -3.740360000000   1.797930000000 AA    0.718171516380  -7.068256007278   3.397595291139 Bohr   0.0
+[INPUT] 12 H     -0.370530000000  -3.352310000000   1.286570000000 AA   -0.700200220935  -6.334947784641   2.431264940082 Bohr   0.0
+[INPUT] 13 H     -6.170610000000  -2.641860000000  -3.299720000000 AA  -11.660762921502  -4.992391859443  -6.235567087750 Bohr   0.0
+[INPUT] 14 O     -5.472000000000  -2.370700000000  -2.681420000000 AA  -10.340581353620  -4.479973723506  -5.067149424931 Bohr   0.0
+[INPUT] 15 H     -4.836270000000  -1.922920000000  -3.288310000000 AA   -9.139225764450  -3.633792159449  -6.214005312669 Bohr   0.0
+[INPUT] 16 H      4.728990000000   1.373540000000   0.721820000000 AA    8.936495945807   2.595614421135   1.364042111234 Bohr   0.0
+[INPUT] 17 O      3.799890000000   1.554500000000   0.956570000000 AA    7.180751403474   2.937579260636   1.807655318975 Bohr   0.0
+[INPUT] 18 H      3.435500000000   0.630590000000   0.955150000000 AA    6.492154100943   1.191642396889   1.804971907878 Bohr   0.0
+[INPUT] 19 H     -3.835670000000   1.902920000000  -6.095200000000 AA   -7.248365804210   3.595997636957 -11.518258674449 Bohr   0.0
+[INPUT] 20 O     -3.562320000000   1.237910000000  -5.441080000000 AA   -6.731809168061   2.339310866860 -10.282151021848 Bohr   0.0
+[INPUT] 21 H     -2.628560000000   1.531620000000  -5.278590000000 AA   -4.967258501987   2.894342326906  -9.975089423868 Bohr   0.0
+[INPUT] 22 H      0.540870000000   2.821650000000  -1.813040000000 AA    1.022096168994   5.332145719379  -3.426149052881 Bohr   0.0
+[INPUT] 23 O     -0.089730000000   2.945930000000  -2.556430000000 AA   -0.169565125157   5.567000882140  -4.830952556622 Bohr   0.0
+[INPUT] 24 H     -0.864220000000   3.278790000000  -2.038020000000 AA   -1.633139111372   6.196015119963  -3.851299636386 Bohr   0.0
+[INPUT] 25 H     -0.497060000000  -0.432680000000  -2.573060000000 AA   -0.939307267476  -0.817646699577  -4.862378702073 Bohr   0.0
+[INPUT] 26 O     -0.642030000000  -0.705850000000  -3.511600000000 AA   -1.213260863755  -1.333863185024  -6.635962259023 Bohr   0.0
+[INPUT] 27 H      0.002670000000  -1.432090000000  -3.589680000000 AA    0.005045568753  -2.706257885728  -6.783512074829 Bohr   0.0
+[INPUT] 28 H     -1.786500000000  -1.100410000000   1.999220000000 AA   -3.375995721535  -2.079473524733   3.777978262753 Bohr   0.0
+[INPUT] 29 O     -1.929690000000  -0.202100000000   2.374630000000 AA   -3.646585605312  -0.381913649775   4.487400347176 Bohr   0.0
+[INPUT] 30 H     -1.007500000000   0.011040000000   2.645790000000 AA   -1.903899070499   0.020862576415   4.999818483113 Bohr   0.0
+[INPUT] 31 H      1.818360000000  -1.003590000000   0.192910000000 AA    3.436202395864  -1.896510241352   0.364547066690 Bohr   0.0
+[INPUT] 32 O      2.494130000000  -0.789540000000   0.870050000000 AA    4.713222619061  -1.492014364389   1.644156214678 Bohr   0.0
+[INPUT] 33 H      2.830740000000  -1.713610000000   1.025900000000 AA    5.349323329851  -3.238253584316   1.938670031191 Bohr   0.0
+[INPUT] 34 H     -2.614920000000   0.746560000000   1.080530000000 AA   -4.941482637648   1.410793935555   2.041905769376 Bohr   0.0
+[INPUT] 35 O     -2.729270000000   1.034220000000   0.137980000000 AA   -5.157572819992   1.954392552548   0.260744410667 Bohr   0.0
+[INPUT] 36 H     -3.268370000000   0.269090000000  -0.181940000000 AA   -6.176324173745   0.508506402859  -0.343816771103 Bohr   0.0
+[INPUT] 37 H      1.050610000000   2.523790000000   0.655950000000 AA    1.985365163729   4.769271895916   1.239565851408 Bohr   0.0
+[INPUT] 38 O      1.292300000000   2.196520000000  -0.240650000000 AA    2.442093070775   4.150821227130  -0.454762591877 Bohr   0.0
+[INPUT] 39 H      2.263810000000   2.111630000000  -0.108230000000 AA    4.277980898052   3.990402376415  -0.204525058462 Bohr   0.0
+[INPUT] 40 H     -0.981490000000  -1.919830000000   4.514630000000 AA   -1.854747293999  -3.627952905724   8.531414253745 Bohr   0.0
+[INPUT] 41 O     -0.230550000000  -2.245250000000   3.987490000000 AA   -0.435676358018  -4.242907581180   7.535264024442 Bohr   0.0
+[INPUT] 42 H      0.246710000000  -1.404340000000   3.800650000000 AA    0.466214332191  -2.653817985772   7.182187595328 Bohr   0.0
+[INPUT] 43 H     -4.430420000000  -1.830020000000  -1.173730000000 AA   -8.372280416796  -3.458236602477  -2.218028244186 Bohr   0.0
+[INPUT] 44 O     -3.601930000000  -1.314810000000  -1.006510000000 AA   -6.806661219855  -2.484630805839  -1.902028241636 Bohr   0.0
+[INPUT] 45 H     -3.441860000000  -1.063790000000  -1.950100000000 AA   -6.504172759096  -2.010271754051  -3.685154915514 Bohr   0.0
+[INPUT] 46 H      2.081170000000   3.423050000000   3.030960000000 AA    3.932841318661   6.468627010692   5.727684294512 Bohr   0.0
+[INPUT] 47 O      1.857430000000   2.621300000000   2.524300000000 AA    3.510033995551   4.953539090322   4.770235656240 Bohr   0.0
+[INPUT] 48 H      2.732610000000   2.390770000000   2.127610000000 AA    5.163884505248   4.517900526826   4.020600199886 Bohr   0.0
+[INPUT] 49 H     -0.730340000000   0.889210000000  -4.445010000000 AA   -1.380142577815   1.680363367224  -8.399851520953 Bohr   0.0
+[INPUT] 50 O     -1.023440000000   1.756300000000  -4.805600000000 AA   -1.934021304925   3.318925992574  -9.081267864210 Bohr   0.0
+[INPUT] 51 H     -0.628850000000   2.345640000000  -4.114630000000 AA   -1.188354273433   4.432617186825  -7.775523803919 Bohr   0.0
+[INPUT] 52 H      0.344700000000   0.797310000000  -0.748320000000 AA    0.651388595138   1.506697536377  -1.414119853535 Bohr   0.0
+[INPUT] 53 O     -0.291420000000   0.049200000000  -0.878010000000 AA   -0.550703987221   0.092974525329  -1.659198434629 Bohr   0.0
+[INPUT] 54 H     -1.115470000000   0.537010000000  -0.625250000000 AA   -2.107932800169   1.014801826153  -1.181551259384 Bohr   0.0
+[INPUT] 55 H     -2.452780000000  -0.857570000000  -3.884330000000 AA   -4.635082443811  -1.620572432643  -7.340319877432 Bohr   0.0
+[INPUT] 56 O     -3.432580000000  -0.877430000000  -3.761610000000 AA   -6.486636100660  -1.658102393477  -7.108412687425 Bohr   0.0
+[INPUT] 57 H     -3.661410000000  -0.128020000000  -4.371730000000 AA   -6.919062129744  -0.241922738467  -8.261372390545 Bohr   0.0
+[INPUT] 58 H     -2.287670000000  -2.091190000000  -0.019440000000 AA   -4.323069763384  -3.951776374429  -0.036736275862 Bohr   0.0
+[INPUT] 59 O     -1.411610000000  -2.161970000000   0.434460000000 AA   -2.667556294697  -4.085531189526   0.821010412079 Bohr   0.0
+[INPUT] 60 H     -0.914730000000  -1.507790000000  -0.108890000000 AA   -1.728589177923  -2.849310153358  -0.205772277704 Bohr   0.0
+
+nuclear repulsion = 2282.88559623329
+number of shells = 740
+number of NR pGTOs = 2860
+number of NR cGTOs = 2340
+basis = def2-QZVP
+ecp = {}
+CPU time:         2.19
+Initial guess from superposition of atomic densities.
+Spherically averaged atomic HF for {'O', 'H'}
+
+
+******** 1 electron system ********
+Atomic HF for atom  H  converged. SCF energy = -0.499983297789143
+
+
+
+******** <class 'pyscf.scf.atom_hf.AtomSphAverageRHF'> ********
+method = AtomSphAverageRHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /jobfs/165200491.gadi-pbs/tmp9hvap7od
+max_memory 4000 MB (current use 496 MB)
+atom = O
+Set gradient conv threshold to 3.16228e-05
+Initial guess from minao.
+init E= -74.2867708298295
+cycle= 1 E= -74.2956318054752  delta_E= -0.00886  |g|=    0  |ddm|= 0.127
+cycle= 2 E= -74.2968217140089  delta_E= -0.00119  |g|=    0  |ddm|= 0.0589
+cycle= 3 E= -74.2971770912505  delta_E= -0.000355  |g|=    0  |ddm|= 0.0166
+cycle= 4 E= -74.2971812122309  delta_E= -4.12e-06  |g|=    0  |ddm|= 0.0039
+cycle= 5 E= -74.2971812179982  delta_E= -5.77e-09  |g|=    0  |ddm|= 0.000153
+cycle= 6 E= -74.2971812180135  delta_E= -1.53e-11  |g|=    0  |ddm|= 1.09e-05
+Extra cycle  E= -74.2971812180135  delta_E= -5.68e-14  |g|=    0  |ddm|= 3.59e-07
+Atomic HF for atom  O  converged. SCF energy = -74.2971812180135
+
+basis = def2-QZVP
+number of NR cGTOs = 2340
+direct_scf_tol = 3.16e-11
+max_cycle = 15
+conv_tol = 1e-08
+conv_tol_grad = 1000000.0
+
+
+******** <class 'gpu4pyscf.scf.hf.RHF'> ********
+method = RHF
+initial guess = minao
+damping factor = None
+level_shift factor = None
+DIIS = <class 'gpu4pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-08
+SCF conv_tol_grad = 1000000.0
+SCF max_cycles = 15
+direct_scf = True
+direct_scf_tol = 3.16e-11
+Overwritten attributes  get_veff  of <class 'gpu4pyscf.scf.hf.RHF'>
+    CPU time for vj and vk on gpu                 2.85 sec, wall time       2.85 sec
+init E= -1521.0131223498
+  HOMO = -0.50217781116349  LUMO = -0.0432634324658977
+    CPU time for vj and vk on gpu                17.86 sec, wall time      17.86 sec
+cycle= 1 E= -1520.65567866484  delta_E= 0.357  |g|= 2.15  |ddm|= 3.47
+  HOMO = -0.35860240441083  LUMO = 0.0638105066640233
+    CPU time for vj and vk on gpu                17.53 sec, wall time      17.53 sec
+cycle= 2 E= -1521.21919023751  delta_E= -0.564  |g|= 1.18  |ddm|= 1.53
+  HOMO = -0.467942590345798  LUMO = 0.0623769118538346
+    CPU time for vj and vk on gpu                15.96 sec, wall time      15.96 sec
+cycle= 3 E= -1521.43103136348  delta_E= -0.212  |g|= 0.121  |ddm|= 0.443
+  HOMO = -0.464265726676951  LUMO = 0.0680879009135741
+    CPU time for vj and vk on gpu                14.08 sec, wall time      14.08 sec
+cycle= 4 E= -1521.43543334708  delta_E= -0.0044  |g|= 0.0275  |ddm|= 0.13
+  HOMO = -0.464709293051241  LUMO = 0.0683181415650035
+    CPU time for vj and vk on gpu                12.49 sec, wall time      12.49 sec
+cycle= 5 E= -1521.43571373545  delta_E= -0.00028  |g|= 0.0111  |ddm|= 0.0348
+  HOMO = -0.464901521443688  LUMO = 0.0683780928413723
+    CPU time for vj and vk on gpu                10.97 sec, wall time      10.97 sec
+cycle= 6 E= -1521.4357492157  delta_E= -3.55e-05  |g|= 0.00375  |ddm|= 0.00953
+  HOMO = -0.464934540511142  LUMO = 0.0684082860869042
+    CPU time for vj and vk on gpu                10.19 sec, wall time      10.19 sec
+cycle= 7 E= -1521.43575506186  delta_E= -5.85e-06  |g|= 0.000707  |ddm|= 0.00435
+  HOMO = -0.46501557756749  LUMO = 0.0684082889584744
+    CPU time for vj and vk on gpu                 8.59 sec, wall time       8.59 sec
+cycle= 8 E= -1521.43575526844  delta_E= -2.07e-07  |g|= 0.000239  |ddm|= 0.00106
+  HOMO = -0.46499377781736  LUMO = 0.0684087799436045
+    CPU time for vj and vk on gpu                 6.99 sec, wall time       6.99 sec
+cycle= 9 E= -1521.43575520968  delta_E= 5.88e-08  |g|= 6.24e-05  |ddm|= 0.000219
+  HOMO = -0.46499642155758  LUMO = 0.0684093961245203
+    CPU time for vj and vk on gpu                 6.53 sec, wall time       6.53 sec
+cycle= 10 E= -1521.43575506483  delta_E= 1.45e-07  |g|= 1.56e-05  |ddm|= 0.000117
+  HOMO = -0.464996086235586  LUMO = 0.0684093764073634
+    CPU time for vj and vk on gpu                 6.27 sec, wall time       6.27 sec
+cycle= 11 E= -1521.43575458659  delta_E= 4.78e-07  |g|= 7.89e-06  |ddm|= 5.02e-05
+  HOMO = -0.464996070814833  LUMO = 0.0684094020718301
+    CPU time for vj and vk on gpu                 6.57 sec, wall time       6.57 sec
+cycle= 12 E= -1521.43575389608  delta_E= 6.91e-07  |g|= 8.21e-06  |ddm|= 7.64e-05
+  HOMO = -0.464996069552477  LUMO = 0.06840939964124
+    CPU time for vj and vk on gpu                 5.48 sec, wall time       5.48 sec
+cycle= 13 E= -1521.43575288089  delta_E= 1.02e-06  |g|= 1.33e-05  |ddm|= 2.45e-05
+  HOMO = -0.464996057812136  LUMO = 0.068409418663862
+    CPU time for vj and vk on gpu                 6.48 sec, wall time       6.48 sec
+cycle= 14 E= -1521.43575337707  delta_E= -4.96e-07  |g|= 1.29e-05  |ddm|= 7.78e-05
+  HOMO = -0.464996054730655  LUMO = 0.0684094281300137
+    CPU time for vj and vk on gpu                 5.96 sec, wall time       5.96 sec
+cycle= 15 E= -1521.43575432157  delta_E= -9.45e-07  |g|= 8.71e-06  |ddm|= 4.55e-05
+
+WARN: SCF failed to converge
+
+SCF not converged.
+SCF energy = -1521.43575432157
+
+E HF = -1521.435754321573768

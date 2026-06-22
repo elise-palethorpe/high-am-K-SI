@@ -1,0 +1,116 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used 29f7f3f96ffaba07f8606b6663fb6adc7dc78cfc
+Start of Calculation Local time: 2026-06-19 13:33:40
+Start of Calculation UTC time:   2026-06-19 03:33:40
+├── Calculation params
+│   ├── Title: water20
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: def2-TZVP
+│   │   ├── Basis set type: Carteisian
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 20
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-20
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: False
+│   │   │   ├── Fock build type: JK
+│   │   │   ├── Box shell pair batch container: True
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 0.212427s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -1519.9318864363 |   1.5199e+03   |    0.5134     |    0.0758
+    2     | -1520.8534247155 |   9.2154e-01   |    1.1805     |    0.0131
+    3     | -1521.2220675099 |   3.6864e-01   |    1.3125     |    0.0136
+    4     | -1521.3169415852 |   9.4874e-02   |    1.2675     |    0.0136
+    5     | -1521.3204686225 |   3.5270e-03   |    1.2515     |    0.0134
+    6     | -1521.3206824622 |   2.1384e-04   |    1.2686     |    0.0134
+    7     | -1521.3207054352 |   2.2973e-05   |    1.2441     |    0.0140
+    8     | -1521.3207091118 |   3.6766e-06   |    1.2426     |    0.0141
+    9     | -1521.3207092734 |   1.6158e-07   |    1.2469     |    0.0143
+   10     | -1521.3207092805 |   7.0595e-09   |    1.2421     |    0.0139
+   11     | -1521.3207092813 |   8.8676e-10   |    1.2982     |    0.0145
+   12     | -1521.3207092814 |   7.5943e-11   |    1.2449     |    0.0128
+=======================================================
+                   HF Energy Results                   
+=======================================================
+E HF                  -1521.32070928
+Converged:            1
+# of SCF iterations:  12
+SCF Time:             14.86s
+
+=======================================================
+            Individual Calculation Summary             
+=======================================================
+HF Energy: -1521.3207092814195676
+=======================================================
+
+
+
+Now, a word from our developers... 
+ Only Iowa can go from 23C (70ish F) to -2C (29ish F) in a day...ah 
+ also tornados
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 17.937390 seconds[0m

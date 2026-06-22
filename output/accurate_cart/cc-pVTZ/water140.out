@@ -1,0 +1,116 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used 29f7f3f96ffaba07f8606b6663fb6adc7dc78cfc
+Start of Calculation Local time: 2026-06-19 16:46:05
+Start of Calculation UTC time:   2026-06-19 06:46:05
+├── Calculation params
+│   ├── Title: water140
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: cc-pVTZ
+│   │   ├── Basis set type: Carteisian
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 20
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-20
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: False
+│   │   │   ├── Fock build type: JK
+│   │   │   ├── Box shell pair batch container: True
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 1.667335s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -10640.9029853188 |   1.0641e+04   |   31.7424     |    1.0144
+    2     | -10645.9917267050 |   5.0887e+00   |   334.8845     |    1.0042
+    3     | -10648.4704454736 |   2.4787e+00   |   342.3550     |    1.0190
+    4     | -10649.0483240457 |   5.7788e-01   |   339.1186     |    1.0272
+    5     | -10649.0730628468 |   2.4739e-02   |   339.0479     |    1.0446
+    6     | -10649.0745863614 |   1.5235e-03   |   339.3050     |    1.0481
+    7     | -10649.0747598192 |   1.7346e-04   |   338.6100     |    1.0615
+    8     | -10649.0747853330 |   2.5514e-05   |   339.0044     |    1.0707
+    9     | -10649.0747863804 |   1.0474e-06   |   338.8709     |    1.0788
+   10     | -10649.0747864497 |   6.9267e-08   |   338.8880     |    1.0850
+   11     | -10649.0747864564 |   6.7375e-09   |   339.2803     |    1.0857
+   12     | -10649.0747864570 |   5.3842e-10   |   338.5592     |    1.0757
+   13     | -10649.0747864570 |   4.3656e-11   |   338.8887     |    1.0773
+=======================================================
+                   HF Energy Results                   
+=======================================================
+E HF                  -10649.0747865
+Converged:            1
+# of SCF iterations:  13
+SCF Time:             4120.5s
+
+=======================================================
+            Individual Calculation Summary             
+=======================================================
+HF Energy: -10649.0747864570148522
+=======================================================
+
+
+
+Now, a word from our developers... 
+ The only reason Canberra has 400k inhabitants is because there's so many roundabouts that no one knows how to leave
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 4145.966995 seconds[0m

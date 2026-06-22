@@ -1,0 +1,108 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used 29f7f3f96ffaba07f8606b6663fb6adc7dc78cfc
+Start of Calculation Local time: 2026-06-17 01:23:35
+Start of Calculation UTC time:   2026-06-16 15:23:35
+├── Calculation params
+│   ├── Title: gly100
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: cc-pVTZ
+│   │   ├── Basis set type: Spherical
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 15
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-11
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: True
+│   │   │   ├── Fock build type: JK
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 5.080878s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -20908.2803231257 |   2.0908e+04   |   14.4689     |    4.3278
+    2     | -20754.2390004302 |   1.5404e+02   |   52.7190     |    4.4028
+    3     | -20760.0997209906 |   5.8607e+00   |   50.3918     |    4.4142
+    4     | -20764.6069899898 |   4.5073e+00   |   46.3014     |    4.5036
+    5     | -20764.7856522108 |   1.7866e-01   |   42.5768     |    4.4673
+    6     | -20764.7998718531 |   1.4220e-02   |   38.1861     |    4.5021
+    7     | -20764.8038849814 |   4.0131e-03   |   37.4152     |    4.5411
+    8     | -20764.8046672931 |   7.8231e-04   |   35.5064     |    4.5820
+    9     | -20764.8047722194 |   1.0493e-04   |   33.8564     |    4.5933
+   10     | -20764.8047814859 |   9.2665e-06   |   29.7135     |    4.5966
+   11     | -20764.8047820882 |   6.0232e-07   |   27.7346     |    4.6139
+   12     | -20764.8047839284 |   1.8402e-06   |   26.4836     |    4.5873
+   13     | -20764.8047828829 |   1.0455e-06   |   23.1881     |    4.5836
+   14     | -20764.8047853370 |   2.4541e-06   |   22.4627     |    4.5873
+   15     | -20764.8047797660 |   5.5710e-06   |   22.4252     |    4.5844
+Warning: HF did not converge in 15 iterations
+RHF failed to converge
+WARNING: Destructing a running timer.
+WARNING: Destructing a running timer.
+
+Now, a word from our developers... 
+ It's a core human instinct/value to not waste resources, to do things efficiently. Like
+ electrons taking the path of least resistance, we want to optimize our own path to greatest success.
+ It's what seperates us from monkeys. - RockstarCowboy1
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 663.817805 seconds[0m

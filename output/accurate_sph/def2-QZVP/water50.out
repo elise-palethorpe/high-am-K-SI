@@ -1,0 +1,116 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used f7955e18563fd737b023b0233fc951adb8d5e37e
+Start of Calculation Local time: 2026-04-14 03:19:32
+Start of Calculation UTC time:   2026-04-13 17:19:32
+├── Calculation params
+│   ├── Title: water50
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: def2-QZVP
+│   │   ├── Basis set type: Spherical
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 15
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-20
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: False
+│   │   │   ├── Fock build type: JK
+│   │   │   ├── Box shell pair batch container: True
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 2.489725s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -3800.6385016713 |   3.8006e+03   |   40.1594     |    0.4855
+    2     | -3802.4552496891 |   1.8167e+00   |   413.9056     |    0.3409
+    3     | -3803.3639960622 |   9.0875e-01   |   411.9277     |    0.3450
+    4     | -3803.6027478693 |   2.3875e-01   |   408.9470     |    0.3497
+    5     | -3803.6125305448 |   9.7827e-03   |   409.0370     |    0.3546
+    6     | -3803.6131201908 |   5.8965e-04   |   408.8571     |    0.3587
+    7     | -3803.6131864054 |   6.6215e-05   |   408.8410     |    0.3640
+    8     | -3803.6131984107 |   1.2005e-05   |   408.3374     |    0.3683
+    9     | -3803.6131989087 |   4.9792e-07   |   408.8353     |    0.3705
+   10     | -3803.6131989388 |   3.0173e-08   |   409.0315     |    0.3704
+   11     | -3803.6131989422 |   3.3142e-09   |   408.4127     |    0.3723
+   12     | -3803.6131989424 |   2.0009e-10   |   408.4566     |    0.3679
+   13     | -3803.6131989424 |   2.5466e-11   |   408.7251     |    0.3683
+=======================================================
+                   HF Energy Results                   
+=======================================================
+E HF                  -3803.61319894
+Converged:            1
+# of SCF iterations:  13
+SCF Time:             5263.5s
+
+=======================================================
+            Individual Calculation Summary             
+=======================================================
+HF Energy: -3803.6131989423793129
+=======================================================
+
+
+
+Now, a word from our developers... 
+ Big bubba's oil makes him impervious to cosmic rays and invisible to heat seeking missiles
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 5285.062076 seconds[0m

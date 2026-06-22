@@ -1,0 +1,253 @@
+| *********************************************************************************************************
+| **                                                                                                     **
+| **           888888888888                                                                              **
+| **         8888888888888888                                                                            **
+| **      888888888888888888                                                                             **
+| **     888888888888888888                                                                              **
+| **    888888888888888                                                                                  **
+| **   88888888888888888888                               88888                       8888:              **
+| **   8888888888888888888888Z                            88888                       8888:              **
+| **   888888888888888888888888?                          88888                       8888:              **
+| **   8888888888888      8888888                                        888888       8888:              **
+| **    88888888888         888888     8888:     88888    88888        888888888I     8888:    888888    **
+| **    8888888888           88888:    8888:     88888    88888      $888888888888    8888:   888888     **
+| **    I8Z 88888             88888    8888:     88888    88888    .888888     8888   8888: 888888       **
+| **    .8Z 88888             88888    8888:     88888    88888    $88888             8888:88888         **
+| **     8I 88888      .=88. .88888    8888:     88888    88888    88888              8888888888         **
+| **    :8  88888      888888$8888$    8888:     88888    88888    8888O              88888888888        **
+| **   ,7   +88888.     8888888888.    8888:     88888    88888    888888             88888O888888       **
+| **         $888888:.   .8888888      88888....888888    88888     888888     8888   8888:  888888      **
+| **          I8888888888888888888     888888888888888    88888     O888888888888O    8888:   888888     **
+| **            O888888888888888888     88888888888888    88888       88888888888$    8888:    888888    **
+| **               8888888Z     888      .8888I  88888    88888         8888888       8888:     888888   **
+| **                                                                                                     **
+| **                                                                                                     **
+| **                                         Copyright (c) 2025                                          **
+| **                          Regents of the University of California San Diego                          **
+| **                                    & Michigan State University                                      **
+| **                                        All Rights Reserved.                                         **
+| **                                                                                                     **
+| **             This software is subject to the terms of the Mozilla Public License, v. 2.0.            **
+| **                                                                                                     **
+| *********************************************************************************************************
+|                                                                                                          
+| Cite this work as:                                                                                       
+| Manathunga, M.; O'Hearn, K. A.; Shajan, A.; Smith, J.; Miao, Y.; He, X.; Ayers, K.;                      
+| Brothers, E.; Palos, E.; Tripathy, V.; Goetz, A.W.; Merz, K.M. QUICK-25.03.                              
+| University of California,San Diego, CA and                                                               
+| Michigan State University, East Lansing, MI, 2025                                                        
+|                                                                                                          
+| If you have any comments or queries, please reach out to us on GitHub issues or discussion sections:     
+| https://github.com/merzlab/QUICK.                                                                        
+|                                                                                                          
+| TASK STARTS ON: Fri Mar 27 11:11:34 2026
+| INPUT FILE :    run_quick.in
+| OUTPUT FILE:    run_quick.out
+| BASIS SET PATH: /g/data/kx58/ep9149/quick_install_h200/basis
+
+|------------ GPU INFORMATION ---------------
+| CUDA ENABLED DEVICE         :        1
+| CUDA DEVICE IN USE          :        0
+| CUDA DEVICE NAME            : NVIDIA H200
+| CUDA DEVICE PM              :      132
+| CUDA DEVICE CORE FREQ(GHZ)  :     1.98
+| CUDA DEVICE MEMORY SIZE (MB):   143426
+| SUPPORTING CUDA VERSION     :      9.0
+|--------------------------------------------
+
+ @ Read Job And Atom
+
+  KEYWORD=HF BASIS=CC-PVTZ CUTOFF=1.0D-10 DENSERMS=1.0D-8 ENERGY
+ ============== JOB CARD =============
+ METHOD = HARTREE FOCK
+ DIRECT SCF 
+ SAD INITAL GUESS 
+ USE DIIS SCF
+ PRINT ENERGY EVERY CYCLE
+ READ SAD GUESS FROM FILE
+ Level shifting allowed after cycle    3
+ DIIS error must exceed 0.100 for level shifting
+ Max HOMO-LUMO gap to allow level shifting = 0.200
+ MAX SCF CYCLES =    200
+ MAX DIIS CYCLES =   10
+ DELTA DENSITY START CYCLE =    3
+ COMPUTATIONAL CUTOFF: 
+      TWO-e INTEGRAL         =  0.100E-09
+      BASIS SET PRIME        =  0.100E-10
+      MATRIX ELEMENTS        =  0.100E-09
+      BASIS FUNCTION         =  0.100E-05
+      NEAR-LINEAR DEPENDENCY =  0.100E-04
+ DENSITY MATRIX MAXIMUM RMS FOR CONVERGENCE  =  0.100E-07
+ BASIS SET = CC-PVTZ,  TYPE = CARTESIAN
+| BASIS FILE = /g/data/kx58/ep9149/quick_install_h200/basis/CC-PVTZ.BAS
+| DATA FILE  =    run_quick.dat
+
+ @ Finish reading job
+
+
+ @ Begin SAD initial guess
+
+ For Atom Kind =    1
+ ELEMENT = N 
+ BASIS FUNCTIONS =   35
+ For Atom Kind =    2
+ ELEMENT = C 
+ BASIS FUNCTIONS =   35
+ For Atom Kind =    3
+ ELEMENT = O 
+ BASIS FUNCTIONS =   35
+ For Atom Kind =    4
+ ELEMENT = H 
+ BASIS FUNCTIONS =   15
+
+ @ Finish SAD initial guess
+
+
+ @ Begin Reading Molecular Information
+
+
+ =========== Molecule Input ==========
+ TOTAL MOLECULAR CHARGE  =    0    MULTIPLICITY                =    1
+ TOTAL ATOM NUMBER       =   73    NUMBER OF ATOM TYPES        =    4
+ NUMBER OF HYDROGEN ATOM =   32    NUMBER OF NON-HYDROGEN ATOM =   41
+ NUMBER OF ELECTRONS     =  310
+
+ -- INPUT GEOMETRY -- :
+    N           0.0000       0.0000       0.0000
+    C           1.4467       0.0000       0.0000
+    C           1.9683       0.0000       1.4335
+    O           1.2386       0.0000       2.4219
+    H           1.7989      -0.8960      -0.5224
+    H           1.7997       0.8930      -0.5236
+    H          -0.4722      -0.0025       0.8997
+    H          -0.5080       0.0767      -0.8765
+    N           3.2879      -0.0000       1.6664
+    C           3.7825       0.0002       3.0260
+    C           5.3079       0.0002       3.0260
+    O           5.9872      -0.0000       2.0023
+    H           3.4120       0.8963       3.5353
+    H           3.4111      -0.8927       3.5368
+    H           3.9719       0.0024       0.9150
+    N           5.9779       0.0004       4.1864
+    C           7.4246       0.0001       4.1864
+    C           7.9461       0.0004       5.6199
+    O           7.2164       0.0008       6.6083
+    H           7.7766      -0.8961       3.6643
+    H           7.7778       0.8929       3.6627
+    H           5.5056      -0.0019       5.0861
+    N           9.2657       0.0002       5.8528
+    C           9.7603       0.0007       7.2124
+    C          11.2857       0.0003       7.2124
+    O          11.9651      -0.0002       6.1888
+    H           9.3900       0.8970       7.7215
+    H           9.3888      -0.8920       7.7235
+    H           9.9497       0.0022       5.1015
+    N          11.9557       0.0007       8.3729
+    C          13.4025       0.0002       8.3729
+    C          13.9240       0.0007       9.8064
+    O          13.1943       0.0015      10.7948
+    H          13.7543      -0.8962       7.8510
+    H          13.7558       0.8928       7.8489
+    H          11.4835      -0.0012       9.2725
+    N          15.2436       0.0004      10.0393
+    C          15.7382       0.0011      11.3989
+    C          17.2636       0.0005      11.3989
+    O          17.9429      -0.0005      10.3752
+    H          15.3680       0.8976      11.9077
+    H          15.3665      -0.8914      11.9102
+    H          15.9276       0.0021       9.2879
+    N          17.9336       0.0010      12.5593
+    C          19.3804       0.0003      12.5593
+    C          19.9018       0.0011      13.9928
+    O          19.1721       0.0023      14.9812
+    H          19.7320      -0.8963      12.0377
+    H          19.7338       0.8927      12.0351
+    H          17.4614      -0.0005      13.4590
+    N          21.2215       0.0006      14.2257
+    C          21.7161       0.0016      15.5853
+    C          23.2415       0.0007      15.5853
+    O          23.9208      -0.0007      14.5617
+    H          21.3461       0.8983      16.0939
+    H          21.3442      -0.8907      16.0969
+    H          21.9055       0.0020      13.4744
+    N          23.9115       0.0014      16.7458
+    C          25.3582       0.0004      16.7458
+    C          25.8797       0.0015      18.1793
+    O          25.1500       0.0030      19.1676
+    H          25.7097      -0.8964      16.2243
+    H          25.7118       0.8926      16.2213
+    H          23.4392       0.0002      17.6454
+    N          27.1993       0.0008      18.4122
+    C          27.6939       0.0020      19.7718
+    C          29.2193       0.0009      19.7718
+    O          29.8987      -0.0009      18.7481
+    H          27.3241       0.8989      20.2802
+    H          27.3219      -0.8901      20.2835
+    H          27.8833       0.0018      17.6608
+    O          29.8206       0.0019      20.9816
+    H          29.2323       0.0034      21.8681
+
+============== BASIS INFOS ==============
+ BASIS FUNCTIONS = 1915
+ NSHELL =  602 NPRIM  = 2717
+ JSHELL =  602 JBASIS = 1240
+
+
+ @ End Reading Molecular Information 
+
+
+ @ Begin Energy Calculation
+
+| condition number of overlap matrix:    9.512E+04
+| Smallest eigenvalue of overlap matrix:    1.367E-04
+
+                                         SCF ENERGY
+| ------------------------------------------------------------------------------------------------------------------------
+| NCYC       ENERGY         DELTA_E      SCF_TIME  DII_CYC   DII_TIME   O_TIME  DIAG_TIME    MAX_ERR    RMS_CHG    MAX_CHG
+| ------------------------------------------------------------------------------------------------------------------------
+|  1  -2158.510151245      ------        13.882     1        0.26     13.59      0.05    0.2266E+01  0.3329E-02  0.2734E+00
+|  2  -2143.557833429  -.149523E+02      59.566     2        0.27     59.27      0.03    0.2034E+00  0.1206E-02  0.1182E+00
+|  3  -2144.511909900  0.954076E+00      57.047     3        0.27     56.75      0.03    0.1747E+00  0.5515E-03  0.6701E-01
+|  4  -2144.856352227  0.344442E+00      53.741     4        0.29     53.42      0.04    0.3972E-01  0.1928E-03  0.2049E-01
+|  5  -2144.900320098  0.439679E-01      51.775     5        0.37     51.36      0.08    0.1228E-01  0.7528E-04  0.8702E-02
+|  6  -2144.906399193  0.607909E-02      47.701     6        0.33     47.34      0.03    0.5611E-02  0.4375E-04  0.3503E-02
+|  7  -2144.908010710  0.161152E-02      45.445     7        0.36     45.05      0.04    0.2572E-02  0.2356E-04  0.1789E-02
+|  8  -2144.908347389  0.336679E-03      43.482     8        0.40     43.06      0.04    0.7419E-03  0.5760E-05  0.5015E-03
+|  9  -2144.908375832  0.284430E-04      39.103     9        0.41     38.65      0.03    0.5022E-03  0.2864E-05  0.3070E-03
+| 10  -2144.908382229  0.639758E-05      36.912    10        0.43     36.45      0.04    0.2045E-03  0.1155E-05  0.1537E-03
+| 11  -2144.908383199  0.969915E-06      33.970     1        0.46     33.48      0.03    0.9277E-04  0.4179E-06  0.6546E-04
+| 12  -2144.908383348  0.148993E-06      30.536     2        0.44     30.06      0.03    0.4008E-04  0.1679E-06  0.2984E-04
+| 13  -2144.908383396  0.477994E-07      27.293     3        0.40     26.86      0.03    0.1508E-04  0.5812E-07  0.1060E-04
+| -------------- 2E-INT CUTOFF CHANGE TO 0.1000E-10 ------------
+| 14  -2144.908383400  0.391992E-08      31.666     4        0.46     31.18      0.03    0.6255E-05  0.2631E-07  0.4789E-05
+| 15  -2144.908383402  0.208547E-08      28.823     5        0.47     28.32      0.04    0.2343E-05  0.1005E-07  0.2001E-05
+| 16  -2144.908383401  -.119326E-08      25.369     6        0.52     24.82      0.03    0.8581E-06  0.4289E-08  0.6806E-06
+| ------------------------------------------------------------------------------------------------------------------------
+| REACH CONVERGENCE AFTER  16 CYCLES
+| MAX ERROR = 0.858095E-06   RMS CHANGE = 0.428880E-08   MAX CHANGE = 0.680639E-06
+| -----------------------------------------------
+ ELECTRONIC ENERGY    =  -5964.433550150
+ CORE_CORE REPULSION  =   3819.525166749
+ TOTAL ENERGY         =  -2144.908383401
+
+ @ End Energy calculation
+
+  Skipping one-electron property calculation.
+
+ @ Output Timing Information
+
+------------- TIMING ---------------
+| INITIAL GUESS TIME  =    11.767093000(  1.84%)
+| TOTAL SCF TIME      =   627.464661000( 98.05%)
+|       TOTAL OP TIME      =   620.817423000( 97.01%)
+|             TOTAL 1e TIME      =     1.154690000(  0.18%)
+|             TOTAL 2e TIME      =   617.439865000( 96.49%)
+|       TOTAL DII TIME      =     6.141503000(  0.96%)
+|             TOTAL DIAG TIME    =     0.630115000(  0.10%)
+| TOTAL TIME          =   639.920338000
+------------------------------------
+| Job cpu time:  0 days  0 hours 10 minutes 39.9 seconds.
+
+ @ Finish Output Timing Information
+
+| Normal Termination. Task Finished on: Fri Mar 27 11:22:14 2026

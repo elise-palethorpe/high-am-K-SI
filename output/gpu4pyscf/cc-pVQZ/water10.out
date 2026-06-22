@@ -1,0 +1,276 @@
+/scratch/kx58/ep9149/software/venvs/gpu4pyscf-py310/lib/python3.10/site-packages/gpu4pyscf/lib/cutensor.py:154: UserWarning: using cupy as the tensor contraction engine.
+  warnings.warn(f'using {contract_engine} as the tensor contraction engine.')
+#INFO: **** input file is /g/data/kx58/ep9149/scripts-and-io/job_scripts/gadi/pyscf/run_gpu4pyscf.py ****.
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import time
+from pathlib import Path
+
+
+def read_xyz(path: Path) -> str:
+    lines = path.read_text().splitlines()
+    nat = int(lines[0].strip())
+    body = lines[2 : 2 + nat]
+    atoms = []
+    for ln in body:
+        parts = ln.split()
+        atoms.append(f"{parts[0]} {parts[1]} {parts[2]} {parts[3]}")
+    return "\n".join(atoms)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--xyz", required=True, type=Path)
+    ap.add_argument("--basis", default="cc-pVTZ")
+    ap.add_argument("--max-cycle", type=int, default=15)
+    ap.add_argument("--conv-tol", type=float, default=1e-8)
+    ap.add_argument("--conv-tol-grad", type=float, default=1e6)
+    ap.add_argument("--direct-scf-tol", type=float, default=3.16e-11)
+    ap.add_argument("--verbose", type=int, default=4)
+    args = ap.parse_args()
+
+    from pyscf import gto
+    from gpu4pyscf import scf as gscf
+    import cupy as cp
+
+    atom_str = read_xyz(args.xyz)
+
+    mol = gto.M(
+        atom=atom_str,
+        basis=args.basis,
+        unit="Angstrom",
+        verbose=args.verbose,
+        cart=False,
+    )
+    nbf = mol.nao_nr()
+
+    mf = gscf.RHF(mol)
+    mf.direct_scf = True
+    mf.direct_scf_tol = args.direct_scf_tol
+    mf.max_cycle = args.max_cycle
+    mf.conv_tol = args.conv_tol
+    mf.conv_tol_grad = args.conv_tol_grad
+    mf.diis_space = 8
+    mf.diis_start_cycle = 1
+
+    _orig_get_veff = mf.get_veff
+
+    def timed_get_veff(*a, **kw):
+        cp.cuda.Device().synchronize()
+        t0 = time.perf_counter()
+        result = _orig_get_veff(*a, **kw)
+        cp.cuda.Device().synchronize()
+        wall = time.perf_counter() - t0
+        print(f"    CPU time for vj and vk on gpu {wall:20.2f} sec, wall time {wall:10.2f} sec")
+        return result
+
+    mf.get_veff = timed_get_veff
+
+    dm0 = mf.get_init_guess(mol, key="atom")
+
+    print(f"basis = {args.basis}")
+    print(f"number of NR cGTOs = {nbf}")
+    print(f"direct_scf_tol = {args.direct_scf_tol}")
+    print(f"max_cycle = {args.max_cycle}")
+    print(f"conv_tol = {args.conv_tol}")
+    print(f"conv_tol_grad = {args.conv_tol_grad}")
+
+    e_tot = mf.kernel(dm0=dm0)
+
+    print(f"\nE HF = {e_tot:.15f}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='gadi-gpu-h200-0005.gadi.nci.org.au', release='4.18.0-553.92.1.el8.nci.x86_64', version='#1 SMP Thu Jan 22 00:54:48 UTC 2026', machine='x86_64')  Threads 1
+Python 3.10.4 (main, Apr 14 2022, 08:51:36) [GCC 8.5.0 20210514 (Red Hat 8.5.0-4)]
+numpy 2.2.6  scipy 1.15.3  h5py 3.16.0
+Date: Fri Apr 10 21:22:24 2026
+PySCF version 2.12.1
+PySCF path  /scratch/kx58/ep9149/software/venvs/gpu4pyscf-py310/lib/python3.10/site-packages/pyscf/__init__.py
+CUDA Environment
+    CuPy 14.0.1
+    CUDA Path /apps/cuda/12.8.0
+    CUDA Build Version 12090
+    CUDA Driver Version 13000
+    CUDA Runtime Version 12090
+CUDA toolkit
+    cuSolver (11, 7, 2)
+    cuBLAS 120803
+    cuTENSOR None
+Device info
+    Device name b'NVIDIA H200'
+    Device global memory 140.06 GB
+    CuPy memory fraction 0.9
+    Num. Devices 1
+GPU4PySCF 1.6.1
+GPU4PySCF path  /scratch/kx58/ep9149/software/venvs/gpu4pyscf-py310/lib/python3.10/site-packages/gpu4pyscf
+
+[CONFIG] conf_file None
+[INPUT] verbose = 4
+[INPUT] num. atoms = 30
+[INPUT] num. electrons = 100
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = Angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 H      3.157700000000  -1.848050000000   1.015030000000 AA    5.967188183539  -3.492308364502   1.918128708217 Bohr   0.0
+[INPUT]  2 O      2.603550000000  -1.104760000000   1.314980000000 AA    4.919996451611  -2.087693833374   2.484952059281 Bohr   0.0
+[INPUT]  3 H      1.873260000000  -1.616830000000   1.753190000000 AA    3.539948360103  -3.055365889981   3.313048944326 Bohr   0.0
+[INPUT]  4 H     -3.186750000000   1.990970000000   0.557830000000 AA   -6.022084727458   3.762388022225   1.054145924066 Bohr   0.0
+[INPUT]  5 O     -2.810930000000   1.669910000000  -0.279240000000 AA   -5.311887855324   3.155672552672  -0.527687123024 Bohr   0.0
+[INPUT]  6 H     -3.284090000000   0.812330000000  -0.387080000000 AA   -6.206030668423   1.535081222768  -0.731475188297 Bohr   0.0
+[INPUT]  7 H      1.048360000000   1.310110000000   0.583020000000 AA    1.981113279949   2.475749093054   1.101748125144 Bohr   0.0
+[INPUT]  8 O      0.659230000000   0.645160000000  -0.038470000000 AA    1.245764153097   1.219175706524  -0.072697764012 Bohr   0.0
+[INPUT]  9 H      1.325330000000  -0.063590000000   0.108150000000 AA    2.504510724670  -0.120167684261   0.204373880372 Bohr   0.0
+[INPUT] 10 H     -0.001160000000  -3.126000000000   2.762340000000 AA   -0.002192082304  -5.907283865390   5.220066062931 Bohr   0.0
+[INPUT] 11 O      0.517830000000  -2.520160000000   2.205670000000 AA    0.978556879084  -4.762412190084   4.168112221169 Bohr   0.0
+[INPUT] 12 H     -0.222590000000  -2.044070000000   1.745100000000 AA   -0.420634138067  -3.862732479440   3.297761059978 Bohr   0.0
+[INPUT] 13 H     -4.405080000000  -1.556920000000  -0.801130000000 AA   -8.324394756799  -2.942152397858  -1.513916290173 Bohr   0.0
+[INPUT] 14 O     -3.667180000000  -0.928850000000  -0.695450000000 AA   -6.929965849483  -1.755272110802  -1.314210033329 Bohr   0.0
+[INPUT] 15 H     -3.293500000000  -0.961920000000  -1.617510000000 AA   -6.223812991255  -1.817765353742  -3.056650903745 Bohr   0.0
+[INPUT] 16 H      2.970540000000   1.881470000000   2.552810000000 AA    5.613507042065   3.555463011585   4.824111748051 Bohr   0.0
+[INPUT] 17 O      2.387100000000   1.563390000000   1.844850000000 AA    4.510965231949   2.954378925884   3.486261240904 Bohr   0.0
+[INPUT] 18 H      2.643330000000   0.611790000000   1.789680000000 AA    4.995169756847   1.156115545748   3.382005050612 Bohr   0.0
+[INPUT] 19 H     -1.196850000000   1.948360000000  -5.333370000000 AA   -2.261718712186   3.681866792058 -10.078608620972 Bohr   0.0
+[INPUT] 20 O     -1.591250000000   1.256910000000  -4.778010000000 AA   -3.007026695714   2.375215663227  -9.029130320433 Bohr   0.0
+[INPUT] 21 H     -1.239460000000   1.501390000000  -3.888240000000 AA   -2.342239942353   2.837215906161  -7.347708706579 Bohr   0.0
+[INPUT] 22 H     -0.168570000000   1.194430000000  -1.482450000000 AA   -0.318551132818   2.257145574964  -2.801424493361 Bohr   0.0
+[INPUT] 23 O     -0.861990000000   1.415170000000  -2.153770000000 AA   -1.628925022114   2.674283719701  -4.070035435304 Bohr   0.0
+[INPUT] 24 H     -1.562080000000   1.724080000000  -1.523250000000 AA   -2.951903384661   3.258039016840  -2.878525319244 Bohr   0.0
+[INPUT] 25 H     -1.688380000000  -0.198880000000  -2.728510000000 AA   -3.190575794193  -0.375828731653  -5.156136628137 Bohr   0.0
+[INPUT] 26 O     -2.449040000000  -0.734450000000  -3.053440000000 AA   -4.628014868105  -1.387909352187  -5.770165337792 Bohr   0.0
+[INPUT] 27 H     -2.492770000000  -0.338710000000  -3.954980000000 AA   -4.710652591532  -0.640069135651  -7.473829028132 Bohr   0.0
+[INPUT] 28 H     -2.205140000000  -1.099800000000   0.407910000000 AA   -4.167110666323  -2.078320791797   0.770838183471 Bohr   0.0
+[INPUT] 29 O     -1.366270000000  -1.118920000000   0.922170000000 AA   -2.581876112210  -2.114452355298   1.742648740290 Bohr   0.0
+[INPUT] 30 H     -0.901130000000  -0.346330000000   0.525600000000 AA   -1.702888902629  -0.654468848721   0.993240051071 Bohr   0.0
+
+nuclear repulsion = 682.276683822461
+number of shells = 340
+number of NR pGTOs = 1320
+number of NR cGTOs = 1150
+basis = cc-pVQZ
+ecp = {}
+CPU time:         7.71
+Initial guess from superposition of atomic densities.
+Spherically averaged atomic HF for {'O', 'H'}
+
+
+******** 1 electron system ********
+Atomic HF for atom  H  converged. SCF energy = -0.499945568582988
+
+
+
+******** <class 'pyscf.scf.atom_hf.AtomSphAverageRHF'> ********
+method = AtomSphAverageRHF
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-09
+SCF conv_tol_grad = None
+SCF max_cycles = 50
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /jobfs/165230005.gadi-pbs/tmp8fb4xkt_
+max_memory 4000 MB (current use 503 MB)
+atom = O
+Set gradient conv threshold to 3.16228e-05
+Initial guess from minao.
+init E= -74.2845828425328
+cycle= 1 E= -74.293851761993  delta_E= -0.00927  |g|=    0  |ddm|= 0.132
+cycle= 2 E= -74.2949554921846  delta_E= -0.0011  |g|=    0  |ddm|= 0.0626
+cycle= 3 E= -74.2952609645781  delta_E= -0.000305  |g|=    0  |ddm|= 0.0168
+cycle= 4 E= -74.2952644844766  delta_E= -3.52e-06  |g|=    0  |ddm|= 0.00422
+cycle= 5 E= -74.2952644875715  delta_E= -3.09e-09  |g|=    0  |ddm|= 9.38e-05
+cycle= 6 E= -74.2952644875726  delta_E= -1.14e-12  |g|=    0  |ddm|= 2.26e-06
+Extra cycle  E= -74.2952644875726  delta_E= -1.42e-14  |g|=    0  |ddm|= 2.13e-07
+Atomic HF for atom  O  converged. SCF energy = -74.2952644875726
+
+basis = cc-pVQZ
+number of NR cGTOs = 1150
+direct_scf_tol = 3.16e-11
+max_cycle = 15
+conv_tol = 1e-08
+conv_tol_grad = 1000000.0
+
+
+******** <class 'gpu4pyscf.scf.hf.RHF'> ********
+method = RHF
+initial guess = minao
+damping factor = None
+level_shift factor = None
+DIIS = <class 'gpu4pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-08
+SCF conv_tol_grad = 1000000.0
+SCF max_cycles = 15
+direct_scf = True
+direct_scf_tol = 3.16e-11
+Overwritten attributes  get_veff  of <class 'gpu4pyscf.scf.hf.RHF'>
+    CPU time for vj and vk on gpu                 6.37 sec, wall time       6.37 sec
+init E= -760.327457389929
+  HOMO = -0.509774775024649  LUMO = -0.0177385323728455
+    CPU time for vj and vk on gpu                 5.42 sec, wall time       5.42 sec
+cycle= 1 E= -760.297015041249  delta_E= 0.0304  |g|= 1.53  |ddm|= 2.66
+  HOMO = -0.380643334767261  LUMO = 0.107490696393582
+    CPU time for vj and vk on gpu                 5.37 sec, wall time       5.37 sec
+cycle= 2 E= -760.581455640035  delta_E= -0.284  |g|= 0.859  |ddm|= 1.15
+  HOMO = -0.484545573258969  LUMO = 0.0997359658827602
+    CPU time for vj and vk on gpu                 5.07 sec, wall time       5.07 sec
+cycle= 3 E= -760.693376758905  delta_E= -0.112  |g|= 0.0835  |ddm|= 0.403
+  HOMO = -0.480241227271384  LUMO = 0.103480520563384
+    CPU time for vj and vk on gpu                 4.72 sec, wall time       4.72 sec
+cycle= 4 E= -760.695478806803  delta_E= -0.0021  |g|= 0.0194  |ddm|= 0.0952
+  HOMO = -0.480805515887506  LUMO = 0.103672107458183
+    CPU time for vj and vk on gpu                 4.46 sec, wall time       4.46 sec
+cycle= 5 E= -760.695622931306  delta_E= -0.000144  |g|= 0.00753  |ddm|= 0.0269
+  HOMO = -0.481011429301053  LUMO = 0.103667849438752
+    CPU time for vj and vk on gpu                 4.19 sec, wall time       4.19 sec
+cycle= 6 E= -760.695639378155  delta_E= -1.64e-05  |g|= 0.00269  |ddm|= 0.00728
+  HOMO = -0.481113717733141  LUMO = 0.10367477175108
+    CPU time for vj and vk on gpu                 3.98 sec, wall time       3.98 sec
+cycle= 7 E= -760.695642161755  delta_E= -2.78e-06  |g|= 0.000475  |ddm|= 0.00301
+  HOMO = -0.481154366648795  LUMO = 0.103670336630408
+    CPU time for vj and vk on gpu                 3.87 sec, wall time       3.87 sec
+cycle= 8 E= -760.695642283206  delta_E= -1.21e-07  |g|= 0.000109  |ddm|= 0.000825
+  HOMO = -0.481155763354275  LUMO = 0.103670920133329
+    CPU time for vj and vk on gpu                 3.21 sec, wall time       3.21 sec
+cycle= 9 E= -760.695642220833  delta_E= 6.24e-08  |g|= 4.35e-05  |ddm|= 0.000146
+  HOMO = -0.481155238615048  LUMO = 0.103671002284199
+    CPU time for vj and vk on gpu                 3.01 sec, wall time       3.01 sec
+cycle= 10 E= -760.695642137173  delta_E= 8.37e-08  |g|= 8.1e-06  |ddm|= 6.73e-05
+  HOMO = -0.481155172488938  LUMO = 0.103671077997817
+    CPU time for vj and vk on gpu                 2.74 sec, wall time       2.74 sec
+cycle= 11 E= -760.695641911363  delta_E= 2.26e-07  |g|= 2.88e-06  |ddm|= 1.94e-05
+  HOMO = -0.481155282508636  LUMO = 0.10367110165192
+    CPU time for vj and vk on gpu                 2.69 sec, wall time       2.69 sec
+cycle= 12 E= -760.695641529373  delta_E= 3.82e-07  |g|= 3.61e-06  |ddm|= 1.38e-05
+  HOMO = -0.48115527214256  LUMO = 0.103671103262693
+    CPU time for vj and vk on gpu                 2.06 sec, wall time       2.06 sec
+cycle= 13 E= -760.695641159064  delta_E= 3.7e-07  |g|= 6.09e-06  |ddm|= 3.44e-06
+  HOMO = -0.48115523427468  LUMO = 0.103671120892924
+    CPU time for vj and vk on gpu                 2.64 sec, wall time       2.64 sec
+cycle= 14 E= -760.695641175185  delta_E= -1.61e-08  |g|= 6.29e-06  |ddm|= 1.25e-05
+  HOMO = -0.481155242676419  LUMO = 0.103671129229397
+    CPU time for vj and vk on gpu                 2.55 sec, wall time       2.55 sec
+cycle= 15 E= -760.695641511988  delta_E= -3.37e-07  |g|= 4.55e-06  |ddm|= 9.55e-06
+
+WARN: SCF failed to converge
+
+SCF not converged.
+SCF energy = -760.695641511988
+
+E HF = -760.695641511987787
