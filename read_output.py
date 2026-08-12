@@ -33,24 +33,19 @@ METHODS = {
 FIGSIZE = (6, 3)
 FONTSIZE = 12
 
+# Slope and intercept for number of spherical basis functions
 NUM_BASIS_FUNCS = {
     "gly": {
-        "6-31G*": (66, 19),
-        "6-31G**": (75, 25),
-        "cc-pVDZ": (75, 25),
-        "cc-pVTZ": (185, 65),
-        "cc-pVQZ": (385, 140),
-        "def2-TZVP": (162, 48),
-        "def2-QZVP": (393, 142),
+        "cc-pVTZ": (162, 58),
+        "cc-pVQZ": (310, 115),
+        "def2-TZVP": (142, 43),
+        "def2-QZVP": (318, 117),
     },
     "water": {
-        "6-31G*": (19, 0),
-        "6-31G**": (25, 0),
-        "cc-pVDZ": (25, 0),
-        "cc-pVTZ": (65, 0),
-        "cc-pVQZ": (140, 0),
-        "def2-TZVP": (48, 0),
-        "def2-QZVP": (142, 0),
+        "cc-pVTZ": (58, 0),
+        "cc-pVQZ": (115, 0),
+        "def2-TZVP": (43, 0),
+        "def2-QZVP": (117, 0),
     },
 }
 BASIS_SETS = ["def2-TZVP", "cc-pVTZ", "def2-QZVP", "cc-pVQZ"]
@@ -81,7 +76,7 @@ def collect_data(methods):
     return data
 
 
-def get_iter_data(file, line_pattern, average_over=range(1, 11, 1), start_from_pattern=None):
+def get_iter_data(file, line_pattern, average_over=range(1, 6, 1), start_from_pattern=None):
     try:
         with open(file, "r") as f:
             lines = f.readlines()

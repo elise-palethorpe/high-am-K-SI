@@ -1,0 +1,117 @@
+
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+------------------------------------------------------------------------------
+
+Commit no. used 7d1a70870ad7735d3efa5c2adaafd5d85c5f276b
+Start of Calculation Local time: 2026-08-12 17:08:59
+Start of Calculation UTC time:   2026-08-12 07:08:59
+├── Calculation params
+│   ├── Title: /jobfs/176047188.gadi-pbs/morpholine_def2-TZVP/from_xyz
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: def2-TZVP
+│   │   ├── Basis set type: Spherical
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 15
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 3.160e-06
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 1.000e-11
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: True
+│   │   │   ├── Fock build type: JK
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Flatten Symmetric Matrices: True
+│   │   │   ├── Concatenate HDF5 files: False
+│   │   │   ├── Light JSON: False
+│   │   │   ├── Exporting Matrices
+│   │   │   │   ├── Density
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 0.864392s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -5160.6092156828 |   5.1606e+03   |    3.9802     |    0.3826
+    2     | -5107.6591277477 |   5.2950e+01   |   50.3902     |    0.1569
+    3     | -5108.9707613883 |   1.3116e+00   |   46.9532     |    0.1630
+    4     | -5109.4638259432 |   4.9306e-01   |   42.3928     |    0.1664
+    5     | -5109.5428849684 |   7.9059e-02   |   38.3660     |    0.1708
+    6     | -5109.5477417851 |   4.8568e-03   |   31.7900     |    0.1760
+    7     | -5109.5484906805 |   7.4890e-04   |   28.1428     |    0.1823
+    8     | -5109.5486801206 |   1.8944e-04   |   25.0617     |    0.1868
+    9     | -5109.5487252074 |   4.5087e-05   |   22.5150     |    0.1870
+   10     | -5109.5487328050 |   7.5976e-06   |   20.1550     |    0.1875
+   11     | -5109.5487334656 |   6.6064e-07   |   17.3549     |    0.1880
+=======================================================
+                   HF Energy Results                   
+=======================================================
+E HF                  -5109.54873347
+Converged:            1
+# of SCF iterations:  11
+SCF Time:             331.8s
+
+=======================================================
+            Individual Calculation Summary             
+=======================================================
+HF Energy: -5109.5487334655990708
+=======================================================
+
+
+Topology 0 time: 377.816019 s, performance: SP: 0 FLOP/s, DP: 29.19 GFLOP/s
+JSON file written to: json_logs/jobfs_176047188gadi-pbs_morpholine_def2-TZVP_from_xyz.json
+Total flops: SP: 0 FLOPS, DP: 11.030186 TFLOPS
+Performance: SP: 0 FLOP/s, DP: 29.19 GFLOP/s
+
+Now, a word from our developers... 
+ That message does look quite alarming, but its a totally normal function of EXESS (Chris, circa 2023)
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+[31mTotal processing time 380.656217 seconds[0m

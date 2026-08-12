@@ -12,6 +12,7 @@ from read_output import (
     METHODS,
     MOLECULES,
     NUM_BASIS_FUNCS,
+    OUTPUT_ROOT,
     collect_data,
     get_time,
     set_pretty_axes,
@@ -96,6 +97,22 @@ def plot_all(rows, annotate=True):
         plt.close()
 
 
+def misc_rows():
+    rows = []
+    for exess_file in sorted((OUTPUT_ROOT / "exess" / "misc").glob("*.out")):
+        molecule, basis = exess_file.stem.rsplit("_", 1)
+        gpu_file = OUTPUT_ROOT / "gpu4pyscf" / "misc" / exess_file.name
+        rows.append(
+            {
+                "basis": basis,
+                "molecule": molecule,
+                "exess": get_time(exess_file),
+                "gpu4pyscf": get_time(gpu_file) if gpu_file.exists() else "",
+            }
+        )
+    return rows
+
+
 def csv_times(rows):
     columns = ["basis", "molecule", "size", "exess", "gpu4pyscf", "quick"]
     with open(OUTDIR / "performance_timings.csv", "w", newline="") as f:
@@ -111,6 +128,8 @@ def csv_times(rows):
                         continue
                     row_dict[method] = get_time(row[method])
                 writer.writerow(row_dict)
+        for row in misc_rows():
+            writer.writerow(row)
 
 
 def latex_tables(data, basis_filter):
