@@ -46,8 +46,8 @@ def get_method_energy_diff(row, method):
     ref_energies = parse_iteration_energies(row[ref_method])
     if not method_energies or not ref_energies:
         return None
-    min_method = min(method_energies[1:])
-    diff = abs(min_method - ref_energies[-1])
+    final_method = method_energies[-1]
+    diff = abs(final_method - ref_energies[-1])
     return diff
 
 
@@ -121,7 +121,7 @@ def plot_energy_diffs(rows):
                     linestyle=style["linestyle"],
                     fillstyle="none",
                 )
-        set_pretty_axes(ax, sizes, basis, molecule, ylabel=r"$|E_{\mathrm{min}} - E_{\mathrm{ref}}|$ ($E_h$)")
+        set_pretty_axes(ax, sizes, basis, molecule, ylabel=r"$|E_{\mathrm{final}} - E_{\mathrm{ref}}|$ ($E_h$)")
         y_min, y_max = ax.get_ylim()
         ax.set_ylim(y_min, y_max * 10)
         ax.legend(fontsize=FONTSIZE - 1, loc="upper left", ncol=2, columnspacing=1.2, handletextpad=0.6)
@@ -157,16 +157,6 @@ def plot_iteration_energy_diffs(rows):
                     linestyle=style["linestyle"],
                     fillstyle="none",
                 )
-                min_idx = np.argmin(energies[1:]) + 1
-                ax.plot(
-                    iters[min_idx],
-                    diffs[min_idx],
-                    marker=style["marker"],
-                    color=style["color"],
-                    linestyle="None",
-                    fillstyle="full",
-                    zorder=10,
-                )
             ax.set_xlabel("Iteration number", fontsize=FONTSIZE)
             ax.set_ylabel(r"$|E_{\mathrm{iter}} - E_{\mathrm{ref}}|$ ($E_h$)", fontsize=FONTSIZE)
             ax.set_yscale("log")
@@ -184,9 +174,7 @@ def latex_table(data, basis):
         if method not in row:
             return None
         method_energies = parse_iteration_energies(row[method])
-        if "accurate" in method:
-            return method_energies[-1] if method_energies else None
-        return min(method_energies[1:]) if method_energies else None
+        return method_energies[-1] if method_energies else None
 
     method_count = 6 if "T" in basis else 4
     lines = [r"\begin{table*}{", "\centering"]
@@ -234,7 +222,7 @@ def latex_table(data, basis):
         r"The reference energies are evaluated using \texttt{EXESS} with a screening threshold of $10^{-20}$ "
         r"and energy convergence threshold of $10^{-10}$. "
         rf"{quick_comment_str}"
-        r"Converged energies are the minimum energy obtained in 15 SCF iterations of an incremental Fock build.}"
+        r"Converged energies are the energy obtained at the final (15\textsuperscript{th}) SCF iteration of an incremental Fock build.}"
     )
     lines.append(caption)
     lines.append(rf"\label{{tab:{basis}_accuracy}}")

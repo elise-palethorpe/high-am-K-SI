@@ -7,6 +7,7 @@ This repository contains input xyzs, output files, and plotting scripts used to 
 - [input](input): Molecular input structures.
   - [input/water](input/water)
   - [input/gly](input/gly)
+  - [input/misc](input/misc)
 - [output](output): Raw program outputs organized as:
   - output/{code}/{basis}/{molecule}{size}.out
   - where code is one of: exess, gpu4pyscf, quick, qchem, accurate_sph, accurate_cart
