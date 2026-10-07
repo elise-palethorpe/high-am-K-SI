@@ -35,7 +35,7 @@ Start of Calculation UTC time:   2026-06-19 03:49:37
 │   │   ├── Theory level: HF
 │   │   ├── Spin configuration: Restricted
 │   │   ├── Primary basis: def2-TZVP
-│   │   ├── Basis set type: Carteisian
+│   │   ├── Basis set type: Cartesian
 │   │   ├── Standard orientation: Full System
 │   ├── Keywords
 │   │   ├── SCF keywords
