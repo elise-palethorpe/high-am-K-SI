@@ -180,6 +180,7 @@ def set_pretty_axes(ax, sizes, basis, molecule, ylabel):
     ax.yaxis.set_minor_formatter(ticker.NullFormatter())
     ax.grid(False)
     ax.tick_params(axis="y", which="minor", left=True, right=True)
+    ax.tick_params(axis="y", which="major", labelsize=FONTSIZE)
     ax.xaxis.set_minor_locator(ticker.FixedLocator([]))
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda val, pos: f"{int(val)}"))
     secax = ax.secondary_xaxis(

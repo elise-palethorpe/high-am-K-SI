@@ -14,12 +14,15 @@ from read_output import (
     NUM_BASIS_FUNCS,
     OUTPUT_ROOT,
     collect_data,
+    get_iter_data,
     get_time,
     set_pretty_axes,
 )
 
 OUTDIR = Path(__file__).resolve().parent / "performance_output"
 OUTDIR.mkdir(parents=True, exist_ok=True)
+
+MISC_MOLECULES = ["GCGC", "buckycatcher", "taxol", "olestra", "morpholine"]
 
 plt.style.use(["science"])
 plt.rcParams["text.usetex"] = True
@@ -99,22 +102,44 @@ def plot_all(rows, annotate=True):
 
 def misc_rows():
     rows = []
-    for exess_file in sorted((OUTPUT_ROOT / "exess" / "misc").glob("*.out")):
-        molecule, basis = exess_file.stem.rsplit("_", 1)
-        gpu_file = OUTPUT_ROOT / "gpu4pyscf" / "misc" / exess_file.name
-        rows.append(
-            {
-                "basis": basis,
-                "molecule": molecule,
-                "exess": get_time(exess_file),
-                "gpu4pyscf": get_time(gpu_file) if gpu_file.exists() else "",
-            }
-        )
+    for molecule in MISC_MOLECULES:
+        for exess_file in sorted((OUTPUT_ROOT / "exess" / "misc").glob(f"{molecule}_*.out"), reverse=True):
+            gpu4pyscf_file = OUTPUT_ROOT / "gpu4pyscf" / "misc" / exess_file.name
+            rows.append(
+                {
+                    "basis": exess_file.stem.split("_")[1],
+                    "molecule": molecule,
+                    "nbasis": int(get_iter_data(gpu4pyscf_file, r"^number of NR cGTOs = (\d+)", average_over=None)[-1]),
+                    "exess": get_time(exess_file),
+                    "gpu4pyscf": get_time(gpu4pyscf_file),
+                }
+            )
     return rows
 
 
-def csv_times(rows):
-    columns = ["basis", "molecule", "size", "exess", "gpu4pyscf", "quick"]
+def misc_latex_table(rows):
+    lines = [r"\begin{table}", r"\centering", r"\begin{tabular}{cc|c|cc}", r"\hline"]
+    lines.append(r"Molecule & Basis & $N$ sph. basis functions & GPU4PySCF (s) & EXESS (s) \\ \hline")
+    for molecule in MISC_MOLECULES:
+        mol_rows = [r for r in rows if r["molecule"] == molecule]
+        for i, row in enumerate(mol_rows):
+            mol_cell = rf"\multirow{{{len(mol_rows)}}}{{*}}{{{molecule}}}" if i == 0 else ""
+            lines.append(
+                f"{mol_cell} & {row['basis']} & {row['nbasis']} & {row['gpu4pyscf']:.2f} & {row['exess']:.2f}" + r" \\"
+            )
+        lines.append(r"\hline")
+    lines.append(r"\end{tabular}")
+    lines.append(
+        r"\caption{Average of 5 SCF iteration timings in seconds of \texttt{GPU4PySCF} and \texttt{EXESS}.}"
+    )
+    lines.append(r"\label{tab:misc_timings}")
+    lines.append(r"\end{table}")
+    with open(OUTDIR / "misc_timings_table.tex", "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+def csv_times(rows, misc):
+    columns = ["basis", "molecule", "size", "nbasis", "exess", "gpu4pyscf", "quick"]
     with open(OUTDIR / "performance_timings.csv", "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=columns)
         writer.writeheader()
@@ -128,8 +153,7 @@ def csv_times(rows):
                         continue
                     row_dict[method] = get_time(row[method])
                 writer.writerow(row_dict)
-        for row in misc_rows():
-            writer.writerow(row)
+        writer.writerows(misc)
 
 
 def latex_tables(data, basis_filter):
@@ -175,7 +199,7 @@ def latex_tables(data, basis_filter):
     com = "," if basis_filter == "T" else " and"
     quick_thresh_str = r" and $10^{-10}$" if basis_filter == "T" else ""
     lines.append(
-        rf"\caption{{Single H200 GPU Fock build speedups of the hybrid LA-HA scheme implemented in \texttt{{EXESS}} over \texttt{{GPU4PySCF}} {quick_str}with {basis_str}-$\zeta$ basis sets. Timings are averaged over the first five iterations of an incremental Fock build and have been tested with screening thresholds of $10^{{-11}}${com} $10^{{-10.5}}$ {quick_thresh_str} for \texttt{{EXESS}}{com} \texttt{{GPU4PySCF}} {quick_str}respectively.}}"
+        rf"\caption{{Single H200 GPU Fock build speedups of the hybrid LA-HA scheme implemented in \texttt{{EXESS}} over \texttt{{GPU4PySCF}} {quick_str}with {basis_str}-$\zeta$ basis sets. Timings are averaged over the first five iterations of an incremental Fock build and have been tested with screening thresholds of $10^{{-11}}${com} $10^{{-10.5}}${quick_thresh_str} for \texttt{{EXESS}}{com} \texttt{{GPU4PySCF}} {quick_str}respectively.}}"
     )
     lines.append(rf"\label{{tab:{basis_filter}_speedups}}")
     lines.append(r"}")
@@ -184,7 +208,7 @@ def latex_tables(data, basis_filter):
     return lines
 
 
-def write_all_latex_tables(data):
+def write_latex_tables(data):
     with open(OUTDIR / "exess_speedups_table.tex", "w") as f:
         for basis_filter in ["T", "Q"]:
             lines = latex_tables(data, basis_filter)
@@ -195,8 +219,10 @@ def write_all_latex_tables(data):
 
 def main():
     data = collect_data(methods=["exess", "gpu4pyscf", "quick"])
-    csv_times(data)
-    write_all_latex_tables(data)
+    misc = misc_rows()
+    csv_times(data, misc)
+    write_latex_tables(data)
+    misc_latex_table(misc)
     plot_all(data)
 
 

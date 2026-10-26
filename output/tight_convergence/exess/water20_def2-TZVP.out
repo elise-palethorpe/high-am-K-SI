@@ -1,0 +1,114 @@
+                 _..--+~/@-~--.      _____  __  __  _____   ____    ____
+             _-=~      (  .   "}    | ____| \ \/ / | ____| / ___|  / ___|
+          _-~     _.--=.\ \""""     |  _|    \  /  |  _|   \___ \  \___ \
+        _~      _-       \ \_\      | |___   /  \  | |___   ___) |  ___) |
+       =      _=          '--'      |_____| /_/\_\ |_____| |____/  |____/
+      '      =
+     :      :     ____            EXtreme-scale Electronic Structure System
+___ |      ;                               Enjoy the power of GPUs!
+    ;       ;                            Gordon Bell Award Winner 2024
+  ___=       \ ___ __     __..-...__
+     :        =_     _.-~~          ~~--.__
+_____ \         ~-+-~                   ___~=_______
+       == ...______ __ ___ _--~~--_
+  
+
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+
+    * Giuseppe Barca         * Hamish Brown           * Jorge Galvez-Vallejo
+    * Andrew Gilbert         * Min Htoo               * Fazeleh Kazemian    
+    * Sean Laguna            * Jack Miller            * Elise Palethorpe    
+    * Oliver Pulsford        * Ross Pure              * Christopher Seidl   
+    * Dylan Silke            * Joshua Singla          * Calum Snowdon       
+    * Ryan Stocks            * Ryan Swart             * Fiona Yu            
+
+Commit no. used 7d1a70870ad7735d3efa5c2adaafd5d85c5f276b
+Start of Calculation Local time: 2026-10-14 14:35:46
+Start of Calculation UTC time:   2026-10-14 03:35:46
+├── Calculation params
+│   ├── Title: water20
+│   ├── Driver: Energy
+│   ├── Model
+│   │   ├── Theory level: HF
+│   │   ├── Spin configuration: Restricted
+│   │   ├── Primary basis: def2-TZVP
+│   │   ├── Basis set type: Spherical
+│   │   ├── Standard orientation: Full System
+│   ├── Keywords
+│   │   ├── SCF keywords
+│   │   │   ├── Max iterations: 30
+│   │   │   ├── Batch size: 10000
+│   │   │   ├── DIIS size: 8
+│   │   │   ├── Convergence threshold: 1.000e-10
+│   │   │   ├── Convergence metric: Energy
+│   │   │   ├── Screening threshold: 3.162e-14
+│   │   │   ├── Allow crap scf: True
+│   │   │   ├── Incremental Fock: True
+│   │   │   ├── Fock build type: JK
+│   │   ├── RTAT keywords
+│   │   │   ├── Enabled: True
+│   │   ├── Export Keywords
+│   │   │   ├── Not exporting any matrices
+│   │   ├── Logging
+│   │   │   ├── Restricted logs visible
+│   │   │   ├── Console logging
+│   │   │   │   ├── Level: INFO
+│   │   │   │   ├── Use log level colors: False
+│   │   ├── Integrals Keywords
+│   │   │   ├── Scheduler: Callback
+│   │   │   ├── Number of streams: 4
+│   ├── System
+│   │   ├── Max GPU Memory: 70 GB
+│   │   ├── Oversubscribe GPUs: False
+│   │   ├── Teams per node: 1
+│   │   ├── Relax CPU affinity: True
+│   │   ├── # GPUs per team: 1
+
+************************************************************
+******************* Beginning HF energy ********************
+************************************************************
+
+One electron integrals and orthogonalizer took 1.164136s
+Iteration |      Energy      | Energy Metric  | Fock Time (s) | DIIS Time (s)
+----------+------------------+----------------+---------------+--------------
+    1     | -1519.9868753696 |   1.5200e+03   |    0.4512     |    0.1927
+    2     | -1520.8415606620 |   8.5469e-01   |    0.7030     |    0.0116
+    3     | -1521.2107973840 |   3.6924e-01   |    0.7555     |    0.0120
+    4     | -1521.3100301488 |   9.9233e-02   |    0.7177     |    0.0122
+    5     | -1521.3142040274 |   4.1739e-03   |    0.6489     |    0.0124
+    6     | -1521.3144364595 |   2.3243e-04   |    0.9569     |    0.0128
+    7     | -1521.3144580153 |   2.1556e-05   |    0.5487     |    0.0125
+    8     | -1521.3144620475 |   4.0322e-06   |    0.7500     |    0.0127
+    9     | -1521.3144622419 |   1.9440e-07   |    0.4705     |    0.0125
+   10     | -1521.3144622492 |   7.3119e-09   |    0.6862     |    0.0124
+   11     | -1521.3144622500 |   8.0900e-10   |    0.4853     |    0.0126
+   12     | -1521.3144622500 |   1.9554e-11   |    0.6968     |    0.0107
+=======================================================
+                   HF Energy Results                   
+=======================================================
+E HF                  -1521.31446225
+Converged:            1
+# of SCF iterations:  12
+SCF Time:             9.5055s
+
+=======================================================
+            Individual Calculation Summary             
+=======================================================
+HF Energy: -1521.3144622499557954
+=======================================================
+
+
+Topology 0 time: 11.974736 s, performance: SP: 0 FLOP/s, DP: 9.219 GFLOP/s
+JSON file written to: json_logs/batch_size_bench_water20_def2tzvp_conv.json
+Total flops: SP: 0 FLOPS, DP: 110.39743 GFLOPS
+Performance: SP: 0 FLOP/s, DP: 9.134 GFLOP/s
+
+Now, a word from our developers... 
+ The best time to buy easter candy is the day after easter, same applies to Halloweeen.
+
+Please cite the following papers for the methods used in this calculation:
+ - J.L. Galvez Vallejo et. al., Toward an extreme-scale electronic structure system, J. Chem. Phys., 2023. DOI: 10.1063/5.0156399
+
+Total processing time 14.723149 seconds

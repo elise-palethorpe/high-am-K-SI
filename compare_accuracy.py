@@ -1,4 +1,5 @@
 import csv
+import re
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -13,6 +14,7 @@ from read_output import (
     METHODS,
     MOLECULES,
     NUM_BASIS_FUNCS,
+    OUTPUT_ROOT,
     collect_data,
     parse_iteration_energies,
     set_pretty_axes,
@@ -208,21 +210,21 @@ def latex_table(data, basis):
     lines.append(r"\end{tabular}")
     if method_count == 6:
         lines.append(r"}")
-    quick_str = r"\texttt{QUICK}, " if "T" in basis else ""
+    quick_str = r", \texttt{QUICK}" if "T" in basis else ""
     quick_comment_str = (
         r"\texttt{QUICK} energies are evaluated in the Cartesian basis so a Cartesian reference energy has also been provided. "
         if "T" in basis
         else ""
     )
     caption = (
-        r"\caption{Converged energies from \texttt{EXESS}, \texttt{GPU4PySCF}, "
+        r"\caption{Final-iteration energies from \texttt{EXESS}, \texttt{GPU4PySCF}"
         rf"{quick_str}"
-        r"\texttt{{Q-Chem}} "
-        rf"for a variety of systems with the {basis} basis set reported to 8dp. "
+        r" and \texttt{{Q-Chem}} "
+        rf"for a variety of systems with the {basis} basis set reported to eight decimal places. "
         r"The reference energies are evaluated using \texttt{EXESS} with a screening threshold of $10^{-20}$ "
-        r"and energy convergence threshold of $10^{-10}$. "
+        r"and energy convergence threshold of $10^{-10}$~$E_\mathrm{h}$. "
         rf"{quick_comment_str}"
-        r"Converged energies are the energy obtained at the final (15\textsuperscript{th}) SCF iteration of an incremental Fock build.}"
+        r"Final-iteration energies are obtained at the final (15\textsuperscript{th}) SCF iteration of an incremental Fock build.}"
     )
     lines.append(caption)
     lines.append(rf"\label{{tab:{basis}_accuracy}}")
@@ -232,7 +234,7 @@ def latex_table(data, basis):
     return lines
 
 
-def write_all_latex_tables(data):
+def write_latex_tables(data):
     with open(OUTDIR / "converged_energy_table.tex", "w") as f:
         for basis in BASIS_SETS:
             lines = latex_table(data, basis)
@@ -241,11 +243,70 @@ def write_all_latex_tables(data):
             f.write("\n\n")
 
 
+TIGHT_DIR = OUTPUT_ROOT / "tight_convergence"
+TIGHT_CODES = ["exess", "gpu4pyscf", "qchem"]
+TIGHT_SYSTEMS = [("gly", 10), ("water", 20)]
+TIGHT_BASIS_SETS = ["def2-TZVP", "cc-pVTZ"]
+TIGHT_ENERGY_PATTERNS = {
+    "orca_reference": r"FINAL SINGLE POINT ENERGY\s+(-?\d+\.\d+)",
+    "exess": r"HF Energy:\s*(-?\d+\.\d+)",
+    "gpu4pyscf": r"E HF\s*=\s*(-?\d+\.\d+)",
+    "qchem": r"^\s*\d+\s+(-?\d+\.\d{8,})\s+\S+\s+Convergence criterion met",
+}
+
+
+def get_tight_energy(code, molecule, size, basis):
+    path = TIGHT_DIR / code / f"{molecule}{size}_{basis}.out"
+    if not path.exists():
+        return None
+    pattern = re.compile(TIGHT_ENERGY_PATTERNS[code], re.MULTILINE)
+    matches = pattern.findall(path.read_text())
+    return float(matches[-1]) if matches else None
+
+
+def tight_convergence_latex_table():
+    lines = [
+        r"\begin{table}[h]",
+        r"\centering",
+        r"\begin{tabular}{c|c|c|c|c|c}",
+        r" & & \texttt{ORCA} & \multicolumn{3}{c}{$E - E_{\texttt{ORCA}}$ ($10^{-8}$ $E_\mathrm{h}$)} \\",
+        r"System & Basis & $E_{\texttt{ORCA}}$ ($E_\mathrm{h}$) & \texttt{EXESS} & \texttt{GPU4PySCF} & \texttt{Q-Chem} \\ \hline",
+    ]
+    for molecule, size in TIGHT_SYSTEMS:
+        mol = "(H2O)" if molecule == "water" else "gly"
+        for basis in TIGHT_BASIS_SETS:
+            e_ref = get_tight_energy("orca_reference", molecule, size, basis)
+            row = [rf"\ce{{{mol}_{size}}}", basis, f"${e_ref:.10f}$" if e_ref is not None else "-"]
+            for code in TIGHT_CODES:
+                energy = get_tight_energy(code, molecule, size, basis)
+                if energy is None or e_ref is None:
+                    row.append("-")
+                else:
+                    row.append(f"${(energy - e_ref) * 1e8:.2f}$")
+            lines.append(" & ".join(row) + r" \\")
+    lines += [
+        r"\end{tabular}",
+        r"\caption{Energies converged to $10^{-10}$~$E_\mathrm{h}$ under tight screening thresholds. "
+        r"Reference energies are computed with \texttt{ORCA} using a screening threshold of $10^{-20}$. "
+        r"\texttt{EXESS}, \texttt{GPU4PySCF} and \texttt{Q-Chem} use screening thresholds of $10^{-13.5}$, $10^{-13}$ "
+        r"and $10^{-13}$ respectively, and their energies are reported as differences from the \texttt{ORCA} reference.}",
+        r"\label{tab:tight-convergence}",
+        r"\end{table}",
+    ]
+    return lines
+
+
+def write_tight_convergence_table():
+    with open(OUTDIR / "tight_convergence_table.tex", "w") as f:
+        f.write("\n".join(tight_convergence_latex_table()) + "\n")
+
+
 def main():
     data = collect_data(methods=ALL_METHODS.keys())
     stats = compute_mad_and_rmsd(data)
     csv_energy_diffs(data, stats)
-    write_all_latex_tables(data)
+    write_latex_tables(data)
+    write_tight_convergence_table()
     plot_energy_diffs(data)
     plot_iteration_energy_diffs(data)
 
